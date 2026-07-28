@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum Category {
+  INVESTING
+  SPENDING
+  SAVING
+}
+
+model Transaction {
+  id          String           @id @default(cuid())
+  amount      Float
+  type        TransactionType
+  category    Category
+  description String
+  date        DateTime
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([date])
+  @@index([category])
+  @@index([type])
+}
+
+model Settings {
+  id              String  @id @default("singleton")
+  currency        String  @default("USD")
+  accentColor     String  @default("violet")
+  theme           String  @default("dark")
+  defaultCategory Category @default(SPENDING)
+  startingBalance Float   @default(0)
+}
